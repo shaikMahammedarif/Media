@@ -1,0 +1,66 @@
+3.Left Recursion
+
+
+import java.util.*;
+public class LRR {
+
+	public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Prompt for input grammar
+        System.out.println("Enter the grammar rules (one rule per line, use '|' to separate alternatives):");
+        System.out.println("Example: A -> Aa|b");
+        List<String> rules = new ArrayList<>();
+        while (true) {
+            String input = scanner.nextLine();
+            if (input.isEmpty()) {
+                break;
+            }
+            rules.add(input);
+        }
+
+        // Eliminate left recursion
+
+        List<String> eliminatedRules = eliminateLeftRecursion(rules); 
+
+        // Print the new grammar without left recursion
+        System.out.println("\nGrammar after eliminating left recursion:");
+        for (String rule : eliminatedRules) {
+            System.out.println(rule);
+        }
+    }
+
+    public static List<String> eliminateLeftRecursion(List<String> rules) {
+        List<String> newRules = new ArrayList<>();
+
+        for (String rule : rules) {
+            String[] parts = rule.split("->");
+            String nonTerminal = parts[0].trim();
+            String[] alternatives = parts[1].trim().split("\\|");
+
+            List<String> alpha = new ArrayList<>();
+            List<String> beta = new ArrayList<>();
+
+            // Divide the alternatives into alpha and beta
+            for (String alternative : alternatives) {
+                if (alternative.startsWith(nonTerminal)) {
+                    beta.add(alternative.substring(1).trim() + " " + nonTerminal + "'");
+                } else {
+                    alpha.add(alternative.trim() + " " + nonTerminal + "'");
+                }
+            }
+
+            // Add new rules to eliminate left recursion
+            if (!beta.isEmpty()) {
+                String newRule1 = nonTerminal + " -> " + String.join(" | ", alpha);
+                String newRule2 = nonTerminal + " -> " + String.join(" | ",beta) + " | epsilon";
+                newRules.add(newRule1);
+                newRules.add(newRule2);
+            } else {
+                newRules.add(rule);
+            }
+        }
+
+        return newRules;
+    }
+}

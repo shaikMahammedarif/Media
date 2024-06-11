@@ -1,0 +1,76 @@
+10.ThreeAddressCode
+
+import java.util.*;
+
+public class Main2 {
+    
+    private static int tempCount = 0;
+
+    public static List<String> generateThreeAddressCode(String expression) {
+        List<String> code = new ArrayList<>();
+        Stack<String> stack = new Stack<>();
+        parseExpression(expression, stack, code);
+        return code;
+    }
+    
+    private static void parseExpression(String expression, Stack<String> stack, List<String> code) {
+        if (expression.isEmpty()) return;
+        
+        int index = findLowestPrecedenceOperator(expression);
+        if (index == -1) {
+            stack.push(expression);
+            return;
+        }
+        
+        String leftOperand = expression.substring(0, index);
+        String rightOperand = expression.substring(index + 1);
+        parseExpression(leftOperand, stack, code);
+        parseExpression(rightOperand, stack, code);
+        
+        String operator = Character.toString(expression.charAt(index));
+        String operand2 = stack.pop();
+        String operand1 = stack.pop();
+        String temp = "t" + tempCount++;
+        code.add(temp + " = " + operand1 + " " + operator + " " + operand2);
+        stack.push(temp);
+    }
+    
+    private static int findLowestPrecedenceOperator(String expression) {
+        int lowestPrecedence = Integer.MAX_VALUE;
+        int index = -1;
+        int parenCount = 0;
+        
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
+            if (c == '(') {
+                parenCount++;
+            } else if (c == ')') {
+                parenCount--;
+            } else if (parenCount == 0 && precedence(c) < lowestPrecedence) {
+                lowestPrecedence = precedence(c);
+                index = i;
+            }
+        }
+        
+        return index;
+    }
+    
+    private static int precedence(char operator) {
+        if (operator == '+' || operator == '-') return 1;
+        if (operator == '*' || operator == '/') return 2;
+        return Integer.MAX_VALUE;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter an arithmetic expression:");
+        String expression = scanner.nextLine();
+        
+        List<String> code = generateThreeAddressCode(expression);
+        
+        System.out.println("\nGenerated Three Address Code:");
+        code.forEach(System.out::println);
+        
+        scanner.close();
+    }
+}

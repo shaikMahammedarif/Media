@@ -1,0 +1,121 @@
+2.
+
+
+import java.util.Scanner;
+public class L1{
+    static int asciiValueOfToken;
+    static char tc;
+    // Returns 'true' if the character is a DELIMITER.
+    static boolean isDelimiter(char ch) {
+        return ch == ' ' || ch == '+' || ch == '-' || ch == '*' || ch == '/' ||
+               ch == ',' || ch == ';' || ch == '>' || ch == '<' || ch == '=' ||
+               ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}';
+    }
+
+    // Returns 'true' if the character is an OPERATOR.
+    static boolean isOperator(char ch) {
+        return ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '>' || ch == '<' || ch == '=';
+    }
+
+    // Returns 'true' if the string is a KEYWORD.
+    static boolean isKeyword(String str) {
+        switch (str) {
+            case "if":
+            case "else":
+            case "while":
+            case "do":
+            case "break":
+            case "continue":
+            case "int":
+            case "double":
+            case "float":
+            case "return":
+            case "char":
+            case "case":
+            case "sizeof":
+            case "long":
+            case "short":
+            case "typedef":
+            case "switch":
+            case "unsigned":
+            case "void":
+            case "static":
+            case "struct":
+            case "goto":
+            case "auto":
+            case "for":
+            case "signed":
+            case "register":
+            case "union":
+            case "volatile":
+            case "extern":
+            case "default":
+            case "const":
+            case "enum":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    // Returns 'true' if the string is an INTEGER.
+    static boolean isInteger(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    // Returns 'true' if the string is a REAL NUMBER.
+    static boolean isRealNumber(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    // Parsing the input STRING.
+    static void parse(String str) {
+        String[] tokens = str.split("\\s+"); // split by whitespace
+        for (String token : tokens) {
+            if (isDelimiter(token.charAt(0))) {
+                if (isOperator(token.charAt(0))) {
+                    System.out.println("'" + token + "' IS AN OPERATOR");
+                }
+             else  {
+                System.out.println("'" + token + "' IS A DELIMITER");
+            }
+            } else {
+                if(token.length() == 1)
+                {
+                    tc = token.charAt(0);
+                    asciiValueOfToken = (int)tc;
+                   
+                }
+                if (isKeyword(token)) {
+                    System.out.println("'" + token + "' IS A KEYWORD");
+                } else if (isInteger(token)) {
+                    System.out.println("'" + token + "' IS AN INTEGER");
+                } else if (isRealNumber(token)) {
+                    System.out.println("'" + token + "' IS A REAL NUMBER");
+                } else if((asciiValueOfToken >= 65 && asciiValueOfToken <= 90) || (asciiValueOfToken >= 97 && asciiValueOfToken <= 112)) {
+                    System.out.println("'" + token + "' IS A VALID IDENTIFIER");
+                } else {
+                    System.out.println("'" + token + "' IS A INVALID IDENTIFIER");
+                }
+            }
+        }
+    }
+
+   
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter an expression : ");
+        String str = sc.nextLine();
+        parse(str); // calling the parse function
+    }
+}
